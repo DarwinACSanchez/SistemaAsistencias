@@ -9,16 +9,16 @@ using System.Windows.Forms;
 
 namespace SistemaAsistencias.Presentacion
 {
-    public partial class MenuPrincipal : Form
+    public partial class Personal : UserControl
     {
-        public MenuPrincipal()
+        public Personal()
         {
             InitializeComponent();
         }
 
-        private void MenuPrincipal_Load(object sender, EventArgs e)
+        private void panel4_Paint(object sender, PaintEventArgs e)
         {
-            panelBienvenida.Dock = DockStyle.Fill;
+
         }
     }
 }
