@@ -17,15 +17,15 @@ namespace SistemaAsistencias.Presentacion
         {
             InitializeComponent();
         }
+        int IdCargo;
 
         private void panel4_Paint(object sender, PaintEventArgs e)
         {
-            //Falta agregar el proceso de agregar cargo a la base de datos 
-            //    video minuto 20
         }
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
+            LocalizarDtvCargos();
             panelCargos.Visible = false;
             panelPaginado.Visible = false;
             panelRegistros.Visible = true;
@@ -33,6 +33,14 @@ namespace SistemaAsistencias.Presentacion
             btnGuardarPersonal.Visible = true;
             btnGuardarCambiosPersonal.Visible = false;
             Limpiar();
+        }
+        private void LocalizarDtvCargos()
+        {
+            datalistadoCargos.Location = new Point(txtSueldoHora.Location.X, txtSueldoHora.Location.Y);
+            datalistadoCargos.Size = new Size(469, 141);
+            datalistadoCargos.Visible = true;
+            lblsueldo.Visible = false;
+            PanelBtnGuardarPer.Visible = false;
         }
         private void Limpiar()
         {
@@ -54,8 +62,6 @@ namespace SistemaAsistencias.Presentacion
             parametros.Nombres = txtNombres.Text;
             parametros.Identificacion = txtIdentificacion.Text;
             parametros.Pais = cbxPais.Text;
-            //cmd.Parameters.AddWithValue("@Id_cargo", parametros.Id_cargo);
-            //cmd.Parameters.AddWithValue("@SueldoPorHora", parametros.SueldoPorHora);
         }
         private void InsertarCargos()
         {
@@ -91,6 +97,9 @@ namespace SistemaAsistencias.Presentacion
             funcion.buscarCargos(ref dt, txtCargo.Text);
             datalistadoCargos.DataSource = dt;
             Bases.DiseñoDtv(ref datalistadoCargos);
+            datalistadoCargos.Columns[1].Visible = false;
+            datalistadoCargos.Columns[3].Visible = false;
+            datalistadoCargos.Visible = true;
         }
 
         private void txtCargo_TextChanged(object sender, EventArgs e)
@@ -122,6 +131,75 @@ namespace SistemaAsistencias.Presentacion
         private void txtSueldoHora_KeyPress(object sender, KeyPressEventArgs e)
         {
             Bases.Decimales(txtSueldoHora, e);
+        }
+
+        private void datalistadoCargos_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if(e.ColumnIndex == datalistadoCargos.Columns["EditarC"].Index)
+            {
+                ObtenerCargoEditar();
+            }
+            if (e.ColumnIndex == datalistadoCargos.Columns["Cargo"].Index)
+            {
+                ObtenerDatosCargos();
+            }
+        }
+        private void ObtenerDatosCargos()
+        {
+            IdCargo = Convert.ToInt32(datalistadoCargos.SelectedCells[1].Value);
+            txtCargo.Text = datalistadoCargos.SelectedCells[2].Value.ToString();
+            txtSueldoHora.Text = datalistadoCargos.SelectedCells[3].Value.ToString();
+            datalistadoCargos.Visible = false;
+            PanelBtnGuardarPer.Visible = true;
+            lblsueldo.Visible = true;
+        }
+        private void ObtenerCargoEditar()
+        {
+            IdCargo = Convert.ToInt32(datalistadoCargos.SelectedCells[1].Value);
+            txtCargoG.Text = datalistadoCargos.SelectedCells[2].Value.ToString();
+            txtSueldoG.Text = datalistadoCargos.SelectedCells[3].Value.ToString();
+            btnGuardarC.Visible = false;
+            btnGuardarCambiosC.Visible = true;
+            txtCargoG.Focus();
+            txtCargoG.SelectAll();
+            panelCargos.Visible = true;
+            panelCargos.Dock = DockStyle.Fill;
+            panelCargos.BringToFront();
+        }
+
+        private void btnVolverCargos_Click(object sender, EventArgs e)
+        {
+            panelCargos.Visible = false;
+        }
+
+        private void btnVolverPersonal_Click(object sender, EventArgs e)
+        {
+            panelRegistros.Visible = false;
+        }
+
+        private void btnGuardarCambiosC_Click(object sender, EventArgs e)
+        {
+            EditarCargos();
+        }
+
+        private void EditarCargos()
+        {
+            Lcargos parametros = new Lcargos();
+            Dcargos funcion = new Dcargos();
+            parametros.Id_cargo = IdCargo;
+            parametros.Cargo = txtCargoG.Text;
+            parametros.SueldoPorHora = Convert.ToDouble(txtSueldoG.Text);
+            if (funcion.editar_Cargo(parametros) == true)
+            {
+                txtCargo.Clear();
+                BucarCargos();
+                panelCargos.Visible = false;
+            }
+        }
+
+        private void Personal_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
